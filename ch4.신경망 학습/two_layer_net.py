@@ -7,15 +7,22 @@ from common.gradient import numerical_gradient
 
 
 class TwoLayerNet:
-
+    # 가중치 초기화
+    # 인수는 차례대로 입력층의 뉴런 수, 은닉층의 뉴런 수, 출력층의 뉴런 수
     def __init__(self, input_size, hidden_size, output_size, weight_init_std=0.01):
-        # 가중치 초기화
-        self.params = {}
+        
+        # 신경망의 매개변수를 보관하는 딕녀너리 변수
+        self.params = {} 
+
+        # 1번째 층의 가중치와 편향
         self.params['W1'] = weight_init_std * np.random.randn(input_size, hidden_size)
         self.params['b1'] = np.zeros(hidden_size)
+
+        # 2번째 층의 가중치와 편향
         self.params['W2'] = weight_init_std * np.random.randn(hidden_size, output_size)
         self.params['b2'] = np.zeros(output_size)
 
+    # 예측 수행 (인수 x는 이미지 데이터)
     def predict(self, x):
         W1, W2 = self.params['W1'], self.params['W2']
         b1, b2 = self.params['b1'], self.params['b2']
@@ -26,13 +33,15 @@ class TwoLayerNet:
         y = softmax(a2)
         
         return y
-        
+
+    # 손실 함수의 값을 구함
     # x : 입력 데이터, t : 정답 레이블
     def loss(self, x, t):
         y = self.predict(x)
 
         return cross_entropy_error(y, t)
 
+    # 정확도
     def accuracy(self, x, t):
         y = self.predict(x)
         y = np.argmax(y, axis=1)
@@ -41,18 +50,24 @@ class TwoLayerNet:
         accuracy = np.sum(y == t) / float(x.shape[0])
         return accuracy
 
-    # x : 입력 데이터, t : 정답 레이블
+    # 가중치 매개변수의 기울기
     def numerical_gradient(self, x, t):
         loss_W = lambda W: self.loss(x, t)
 
+        # 기울기를 보관하는 딕셔너리 변수 (numerical_gradient() 메서드의 반환 값)
         grads = {}
+
+        # 1번째 층의 가중치의 기울기와 편향의 기울기
         grads['W1'] = numerical_gradient(loss_W, self.params['W1'])
         grads['b1'] = numerical_gradient(loss_W, self.params['b1'])
+        
+        # 2번째 층의 가중치의 기울기와 편향의 기울기
         grads['W2'] = numerical_gradient(loss_W, self.params['W2'])
         grads['b2'] = numerical_gradient(loss_W, self.params['b2'])
 
         return grads
 
+    # 가중치 매개변수의 기울기 (numerical_gradient() 성능보다 나은 버전)
     def gradient(self, x, t):
         W1, W2 = self.params['W1'], self.params['W2']
         b1, b2 = self.params['b1'], self.params['b2']
