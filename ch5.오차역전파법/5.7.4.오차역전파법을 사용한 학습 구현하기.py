@@ -30,7 +30,7 @@ for i in range(iters_num):
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
 
-    # 오차역전파법으로 기울기 계산
+    # 오차역전파법으로 기울기 계산 (변경한 부분)
     grad = network.gradient(x_batch, t_batch)
 
     # 매개변수 갱신
