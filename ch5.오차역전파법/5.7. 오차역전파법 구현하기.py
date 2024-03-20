@@ -56,9 +56,10 @@ gradient(x, t) : 가중치 매개변수의 기울기를 오차역전파법으로
 
 
 class TwoLayerNet:
+        # 가중치 초기화
+        # 인수는 차례대로 입력층 뉴런 수, 은닉층 뉴런 수, 출력층 뉴런 수, 가중치 초기화 시 정규분포의 스케일
     def __init__(self, input_size, hidden_size, output_size,
         weight_init_std=0.01):
-        # 가중치 초기화
         self.params = {}
         self.params['W1'] = weight_init_std * \
             np.random.randn(input_size, hidden_size)
@@ -76,6 +77,7 @@ class TwoLayerNet:
             Affine(self.params['W2'], self.params['b2'])
         self.lastLayer = SoftmaxWithLoss()
 
+    # 예측 수행
     def predict(self, x):
         for layer in self.layers.values():
             x = layer.forward(x)
@@ -87,6 +89,7 @@ class TwoLayerNet:
         y = self.predict(x)
         return self.lastLayer.forward(y, t)
 
+    # 정확도 구하기
     def accuracy(self, x, t):
         y = self.predict(x)
         y = np.argmax(y, axis=1)
@@ -96,6 +99,7 @@ class TwoLayerNet:
         accuracy = np.sum(y == t) / float(x.shape[0])
         return accuracy
 
+    # 가중치 매개변수의 기울기를 수치 미분 방식으로 구함함
     def numerical_gradient(self, x, t):
         loss_W = lambda W: self.loss(x, t)
 
@@ -107,6 +111,7 @@ class TwoLayerNet:
 
         return grads
 
+    # 가중치 매개변수의 기울기를 오차역전파법으로 구함함
     def gradient(self, x, t):
         # 순전파
         self.loss(x, t)
